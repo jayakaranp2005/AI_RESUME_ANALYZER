@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from parser.pdf_parser import extract_text_from_pdfs
 from parser.jd_parser import extract_jd_keywords
 from matcher.keywords import extract_resume_keywords
-from matcher.scorer import score_resume, rank_results, get_top_moderate_candidates
+from matcher.scorer import score_resume, rank_results, get_top_moderate_candidates, get_skill_gap_frequency
 from gemini.suggestions import generate_ai_suggestions
 from utils.exporter import export_results_to_csv
 from config import STRONG_THRESHOLD, MODERATE_THRESHOLD, TOP_N_MODERATE, LABEL_COLORS
@@ -60,7 +60,7 @@ st.markdown(
 
 
 st.divider()
-st.subheader(" Kindly uplioad the resumes and paste the job description to get started! ")
+st.subheader(" Kindly upload the resumes and paste the job description to get started! ")
 
 col1, col2 = st.columns([1, 1])
 
@@ -120,7 +120,7 @@ if analyze_button:
     
     with st.spinner(" Extracting keywords from job description..."):
         try:
-            jd_keywords = extract_jd_keywords(jd_text, GEMINI_KEY_1)
+            jd_keywords, jd_aliases = extract_jd_keywords(jd_text, GEMINI_KEY_1)
             st.success(f"Extracted {len(jd_keywords)} keywords from JD")
         except Exception as e:
             st.error(f"JD keyword extraction failed: {str(e)}")
@@ -136,7 +136,7 @@ if analyze_button:
             
             for filename, resume_text in resume_texts.items():
                 # Extract keywords from resume
-                resume_keywords = extract_resume_keywords(resume_text, jd_keywords)
+                resume_keywords = extract_resume_keywords(resume_text, jd_keywords, jd_aliases)
                 
                 # Score the resume
                 result = score_resume(resume_keywords, jd_keywords, filename)
@@ -280,7 +280,41 @@ if analyze_button:
                     st.caption("⚠️ AI Suggestions not generated for this candidate (outside top 5)")
     
     # ════════════════════════════════════════════════════════════════════════════════
-    # UI LAYOUT - SECTION 5: DOWNLOAD
+    # UI LAYOUT - SECTION 5: SKILL GAP ANALYSIS
+    # ════════════════════════════════════════════════════════════════════════════════
+    
+    gap_data = get_skill_gap_frequency(ranked_results)
+    
+    if gap_data:
+        st.markdown("---")
+        st.subheader(" Skill Gap Analysis — What The Talent Pool Is Missing")
+        st.caption("Skills most commonly absent across all candidates")
+        
+        top_gaps = gap_data[:10]
+        
+        for gap in top_gaps:
+            skill = gap["skill"]
+            count = gap["count"]
+            pct   = gap["percentage"]
+            total = len(ranked_results)
+            
+            if pct >= 70:
+                color = "🔴"
+            elif pct >= 40:
+                color = "🟡"
+            else:
+                color = "🟢"
+            
+            col1, col2, col3 = st.columns([3, 1, 1])
+            with col1:
+                st.progress(int(pct) / 100, text=f"{color} {skill}")
+            with col2:
+                st.metric("Candidates", f"{count}/{total}")
+            with col3:
+                st.metric("Gap Rate", f"{pct}%")
+    
+    # ════════════════════════════════════════════════════════════════════════════════
+    # UI LAYOUT - SECTION 6: DOWNLOAD
     # ════════════════════════════════════════════════════════════════════════════════
     
     st.divider()

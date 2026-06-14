@@ -327,10 +327,11 @@ hr, [data-testid="stDivider"] {
 [data-testid="stProgress"] > div > div {
     background: linear-gradient(90deg, #00e5c8, #00b8a9) !important;
     border-radius: 99px !important;
+    color:#050505 !important;
 }
 
 [data-testid="stProgress"] {
-    background: rgba(255, 255, 255, 0.08) !important;
+    background: rgba(0, 0, 0, 0.08) !important;
     border-radius: 99px !important;
 }
 
