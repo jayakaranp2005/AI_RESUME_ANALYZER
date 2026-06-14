@@ -4,6 +4,7 @@ Calculates match scores, labels candidates, and ranks resumes by score.
 """
 
 from config import STRONG_THRESHOLD, MODERATE_THRESHOLD, LABEL_COLORS
+from collections import Counter
 
 
 def score_resume(resume_keywords, jd_keywords, filename):
@@ -116,3 +117,37 @@ def format_label_with_color(label):
     
     color = LABEL_COLORS.get(label, "")
     return f"{color} {label}"
+
+
+def get_skill_gap_frequency(all_results):
+    """
+    Count how many candidates are missing each skill.
+    
+    Args:
+        all_results (list): List of result dicts, each has 'missing_keywords' set
+    
+    Returns:
+        list: Sorted list of dicts:
+              [{"skill": "docker", "count": 14, "percentage": 70.0}, ...]
+              Sorted by count descending
+    """
+    
+    total_candidates = len(all_results)
+    
+    if total_candidates == 0:
+        return []
+    
+    gap_counter = Counter()
+    
+    for result in all_results:
+        for skill in result.get("missing_keywords", set()):
+            gap_counter[skill] += 1
+    
+    return [
+        {
+            "skill": skill,
+            "count": count,
+            "percentage": round((count / total_candidates) * 100, 1)
+        }
+        for skill, count in gap_counter.most_common()
+    ]
