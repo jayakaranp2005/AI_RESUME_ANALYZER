@@ -1,0 +1,367 @@
+/* ═══════════════════════════════════════════
+   RESUME ANALYZER — BLACK + CYAN GLASSMORPHISM
+   Inject via: st.markdown(open("style.css").read(), unsafe_allow_html=True)
+   ═══════════════════════════════════════════ */
+
+/* ── Base & Background ── */
+.stApp {
+    background-color: #050505 !important;
+    color: #d1d5db !important;
+}
+
+[data-testid="stAppViewContainer"] {
+    background: #050505;
+}
+
+/* Subtle ambient glow at top-left */
+[data-testid="stAppViewContainer"]::before {
+    content: '';
+    position: fixed;
+    top: -150px;
+    left: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(0,229,200,0.06) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Sidebar ── */
+[data-testid="stSidebar"] {
+    background: rgba(0, 0, 0, 0.6) !important;
+    border-right: 0.5px solid rgba(0, 229, 200, 0.15) !important;
+    backdrop-filter: blur(14px);
+}
+
+[data-testid="stSidebar"] * {
+    color: #9ca3af !important;
+}
+
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] .stMarkdown strong {
+    color: #00e5c8 !important;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+/* ── Main Title ── */
+h1 {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em;
+}
+
+h2 {
+    color: #00e5c8 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+}
+
+h3 {
+    color: #d1d5db !important;
+    font-weight: 500 !important;
+}
+
+p, li, .stMarkdown p {
+    color: #9ca3af !important;
+    line-height: 1.7;
+}
+
+/* ── Dividers ── */
+hr, [data-testid="stDivider"] {
+    border-color: rgba(0, 229, 200, 0.15) !important;
+}
+
+/* ── File Uploader ── */
+[data-testid="stFileUploader"] {
+    background: rgba(0, 229, 200, 0.03) !important;
+    border: 1px dashed rgba(0, 229, 200, 0.3) !important;
+    border-radius: 12px !important;
+    padding: 8px !important;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+[data-testid="stFileUploader"]:hover {
+    border-color: rgba(0, 229, 200, 0.6) !important;
+    background: rgba(0, 229, 200, 0.06) !important;
+}
+
+[data-testid="stFileUploader"] label {
+    color: #9ca3af !important;
+}
+
+[data-testid="stFileUploader"] small {
+    color: #4b5563 !important;
+}
+
+[data-testid="stFileUploaderDropzoneInstructions"] * {
+    color: #6b7280 !important;
+}
+
+[data-testid="stFileUploaderDropzoneInstructions"] span {
+    color: #00e5c8 !important;
+}
+
+/* ── Text Area (Job Description) ── */
+.stTextArea textarea {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 0.5px solid rgba(0, 229, 200, 0.2) !important;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+    font-size: 13px !important;
+    transition: border-color 0.2s;
+    caret-color: #00e5c8;
+}
+
+.stTextArea textarea:focus {
+    border-color: rgba(0, 229, 200, 0.6) !important;
+    box-shadow: 0 0 0 2px rgba(0, 229, 200, 0.08) !important;
+}
+
+.stTextArea textarea::placeholder {
+    color: #ffffff !important;
+}
+
+.stTextArea label {
+    color: #6b7280 !important;
+    font-size: 12px !important;
+}
+
+/* ── Primary Button (Analyze) ── */
+.stButton > button[kind="primary"] {
+    background: linear-gradient(135deg, #00e5c8 0%, #00b8a9 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 10px 22px !important;
+    transition: opacity 0.2s, transform 0.1s !important;
+    letter-spacing: 0.01em;
+}
+
+/* Force the inner text to be black across all states */
+.stButton > button[kind="primary"] div[data-testid="stMarkdownContainer"] p {
+    color: #000000 !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+}
+
+.stButton > button[kind="primary"]:hover {
+    opacity: 0.88 !important;
+    transform: translateY(-1px);
+}
+
+.stButton > button[kind="primary"]:active {
+    transform: scale(0.98) !important;
+}
+
+/* ── Secondary Buttons ── */
+.stButton > button:not([kind="primary"]) {
+    background: rgba(0, 229, 200, 0.06) !important;
+    color: #00e5c8 !important;
+    border: 0.5px solid rgba(0, 229, 200, 0.3) !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.stButton > button:not([kind="primary"]):hover {
+    background: rgba(0, 229, 200, 0.12) !important;
+    border-color: rgba(0, 229, 200, 0.55) !important;
+}
+
+/* ── Download Button ── */
+.stDownloadButton > button {
+    width: 100% !important;
+    background: rgba(0, 229, 200, 0.06) !important;
+    color: #00e5c8 !important;
+    border: 0.5px solid rgba(0, 229, 200, 0.35) !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.stDownloadButton > button:hover {
+    background: rgba(0, 229, 200, 0.12) !important;
+    border-color: rgba(0, 229, 200, 0.6) !important;
+}
+
+/* ── Metrics ── */
+[data-testid="stMetric"] {
+    background: rgba(0, 229, 200, 0.05) !important;
+    border: 0.5px solid rgba(0, 229, 200, 0.15) !important;
+    border-radius: 10px !important;
+    padding: 14px 16px !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: #ffffff !important;
+    font-size: 24px !important;
+    font-weight: 600 !important;
+}
+
+[data-testid="stMetricLabel"] {
+    color: #6b7280 !important;
+    font-size: 11px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ── Dataframe / Table ── */
+[data-testid="stDataFrame"] {
+    border: 0.5px solid rgba(0, 229, 200, 0.2) !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+[data-testid="stDataFrame"] thead th {
+    background: rgba(0, 229, 200, 0.08) !important;
+    color: #00e5c8 !important;
+    font-size: 11px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 0.5px solid rgba(0, 229, 200, 0.2) !important;
+}
+
+[data-testid="stDataFrame"] tbody tr {
+    background: transparent !important;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.05) !important;
+    transition: background 0.15s;
+}
+
+[data-testid="stDataFrame"] tbody tr:hover {
+    background: rgba(0, 229, 200, 0.05) !important;
+}
+
+[data-testid="stDataFrame"] td {
+    color: #d1d5db !important;
+    font-size: 13px !important;
+}
+
+/* ── Expanders ── */
+[data-testid="stExpander"] {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 0.5px solid rgba(0, 229, 200, 0.18) !important;
+    border-radius: 10px !important;
+    transition: border-color 0.2s;
+    margin-bottom: 8px !important;
+}
+
+[data-testid="stExpander"]:hover {
+    border-color: rgba(0, 229, 200, 0.4) !important;
+}
+
+[data-testid="stExpander"] summary {
+    color: #d1d5db !important;
+    font-size: 13px !important;
+    padding: 12px 16px !important;
+}
+
+[data-testid="stExpander"] summary:hover {
+    background: rgba(0, 229, 200, 0.04) !important;
+    border-radius: 10px 10px 0 0;
+}
+
+[data-testid="stExpander"] summary svg {
+    fill: #00e5c8 !important;
+}
+
+/* ── Expander body glass panel ── */
+[data-testid="stExpander"] > div > div {
+    background: rgba(0, 229, 200, 0.02) !important;
+    border-top: 0.5px solid rgba(0, 229, 200, 0.1) !important;
+}
+
+/* ── Success / Error / Warning Alerts ── */
+[data-testid="stAlert"][data-baseweb="notification"] {
+    border-radius: 10px !important;
+    border: 0.5px solid !important;
+    backdrop-filter: blur(10px);
+    font-size: 13px !important;
+}
+
+/* Success */
+.stSuccess {
+    background: rgba(0, 229, 200, 0.07) !important;
+    border-color: rgba(0, 229, 200, 0.35) !important;
+    color: #00e5c8 !important;
+}
+
+/* Error */
+.stError {
+    background: rgba(239, 68, 68, 0.07) !important;
+    border-color: rgba(239, 68, 68, 0.35) !important;
+    color: #f87171 !important;
+}
+
+/* Warning */
+.stWarning {
+    background: rgba(250, 199, 75, 0.07) !important;
+    border-color: rgba(250, 199, 75, 0.3) !important;
+    color: #fac74b !important;
+}
+
+/* Info */
+.stInfo {
+    background: rgba(0, 229, 200, 0.05) !important;
+    border-color: rgba(0, 229, 200, 0.2) !important;
+    color: #9ca3af !important;
+}
+
+/* ── Spinner ── */
+[data-testid="stSpinner"] * {
+    color: #00e5c8 !important;
+    border-top-color: #00e5c8 !important;
+}
+
+/* ── Caption / Small text ── */
+.stCaption, small {
+    color: #4b5563 !important;
+    font-size: 12px !important;
+}
+
+/* ── Progress Bar (inside dataframe column) ── */
+[data-testid="stProgress"] > div > div {
+    background: linear-gradient(90deg, #00e5c8, #00b8a9) !important;
+    border-radius: 99px !important;
+}
+
+[data-testid="stProgress"] {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-radius: 99px !important;
+}
+
+/* ── Scrollbars ── */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 229, 200, 0.25);
+    border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 229, 200, 0.45);
+}
+
+/* ── Column containers ── */
+[data-testid="stVerticalBlock"],
+[data-testid="stHorizontalBlock"] {
+    gap: 14px;
+}
+
+/* ── Subtle entry animation for main content ── */
+[data-testid="stAppViewContainer"] > .main {
+    animation: fadeInUp 0.4s ease both;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
