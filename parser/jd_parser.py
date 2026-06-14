@@ -10,15 +10,18 @@ import google.generativeai as genai
 
 def extract_jd_keywords(jd_text, gemini_key_1):
     """
-    Extract keywords from job description using Google Gemini API (Account 1).
+    Extract keywords and aliases from job description using Google Gemini API (Account 1).
     
     Args:
         jd_text (str): Raw job description text
         gemini_key_1 (str): First Gemini API key (for JD keyword extraction)
         
     Returns:
-        set: Set of extracted keywords from the job description
-             Example: {"python", "machine learning", "docker", "aws"}
+        tuple: (jd_keywords, jd_aliases) where:
+               - jd_keywords (set): Set of extracted keywords from JD
+                 Example: {"python", "machine learning", "docker", "aws"}
+               - jd_aliases (dict): Mapping of keywords to their synonyms/abbreviations
+                 Example: {"retrieval augmented generation": ["rag", "retrieval augmented"], ...}
              
     Raises:
         ValueError: If API key is missing or invalid
@@ -34,13 +37,30 @@ def extract_jd_keywords(jd_text, gemini_key_1):
     # Configure Gemini API with first key
     genai.configure(api_key=gemini_key_1)
     
-    # Create the prompt for keyword extraction
+    # Create the prompt for keyword extraction with aliases
     prompt = f"""You are an expert HR analyst. Extract all technical skills, tools, technologies, frameworks, domain knowledge and important keywords from this job description.
 
-Include both single word and multi-word skills exactly as they appear. Return ONLY a valid JSON object like:
-{{"keywords": ["python", "machine learning", "docker", ...]}}
+Also for each keyword, list common synonyms or abbreviations that mean the same thing so we can match them against resumes that may use different terms.
 
-No explanation. No markdown. Just JSON.
+Return ONLY a valid JSON object like this:
+{{
+  "keywords": ["python", "large language models", "docker"],
+  "aliases": {{
+    "large language models": ["llms", "llm", "language models"],
+    "retrieval augmented generation": ["rag", "retrieval augmented"],
+    "autonomous agents": ["agentic", "ai agents", "agent systems"],
+    "generative ai": ["genai", "gen ai"],
+    "natural language processing": ["nlp"],
+    "computer vision": ["cv"],
+    "ci/cd pipelines": ["ci cd", "cicd", "continuous integration"]
+  }}
+}}
+
+Rules:
+- Include ONLY keywords that actually appear in the JD
+- Aliases should be common abbreviations or synonyms
+- Not every keyword needs aliases
+- No explanation. No markdown. Just JSON.
 
 JD:
 {jd_text}"""
@@ -81,7 +101,18 @@ JD:
             if not jd_keywords:
                 raise ValueError("No keywords extracted from job description")
             
-            return jd_keywords
+            # Extract and normalize aliases
+            jd_aliases = {}
+            if "aliases" in keywords_data and isinstance(keywords_data["aliases"], dict):
+                for key, alias_list in keywords_data["aliases"].items():
+                    key_lower = key.lower().strip()
+                    if isinstance(alias_list, list):
+                        # Normalize all aliases to lowercase
+                        normalized_aliases = [alias.lower().strip() for alias in alias_list if alias]
+                        if normalized_aliases:
+                            jd_aliases[key_lower] = normalized_aliases
+            
+            return jd_keywords, jd_aliases
             
         except json.JSONDecodeError as e:
             raise Exception(
@@ -156,7 +187,7 @@ GoodtoHave Skills
     
     gemini_key_1 = os.getenv("GEMINI_KEY_1")
     
-    keywords = extract_jd_keywords(test_jd, gemini_key_1)
+    keywords, aliases = extract_jd_keywords(test_jd, gemini_key_1)
     
     print(f"\nTotal keywords extracted: {len(keywords)}")
     print("\nSingle word keywords:")
@@ -168,3 +199,7 @@ GoodtoHave Skills
         print(f"  • {k}")
     
     print(f"\nRaw set: {keywords}")
+    
+    print(f"\n\nAliases found: {len(aliases)}")
+    for keyword, alias_list in sorted(aliases.items()):
+        print(f"  {keyword}: {alias_list}")
